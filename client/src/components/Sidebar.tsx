@@ -79,8 +79,9 @@ export function Sidebar() {
       </div>
 
       {/* Navigation List */}
-      <ScrollArea className="flex-1 px-4 py-4">
-        {searchQuery ? (
+      <ScrollArea className="flex-1">
+        <div className="px-4 py-4">
+          {searchQuery ? (
           <div className="space-y-1">
             <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
               Search Results ({searchResults.length})
@@ -147,6 +148,7 @@ export function Sidebar() {
             ))}
           </div>
         )}
+        </div>
       </ScrollArea>
       
       {/* Footer */}
