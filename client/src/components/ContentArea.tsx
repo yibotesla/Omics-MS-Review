@@ -71,7 +71,7 @@ export function ContentArea() {
                 </div>
                 {module.content && (
                   <div className="mt-6 text-lg text-muted-foreground leading-relaxed border-l-2 border-primary/20 pl-6">
-                    <MarkdownRenderer content={module.content} />
+                    <MarkdownRenderer content={module.content} searchQuery={searchQuery} />
                   </div>
                 )}
               </div>
@@ -87,7 +87,7 @@ export function ContentArea() {
                       {section.title}
                     </h3>
                     <div className="prose-content">
-                      <MarkdownRenderer content={section.content} />
+                      <MarkdownRenderer content={section.content} searchQuery={searchQuery} />
                     </div>
                   </div>
                 ))}
