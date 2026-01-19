@@ -1,0 +1,111 @@
+import React, { useEffect, useRef } from 'react';
+import { useCourse } from '@/contexts/CourseContext';
+import { MarkdownRenderer } from './MarkdownRenderer';
+import { cn } from '@/lib/utils';
+import { Share2, Clock, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+
+export function ContentArea() {
+  const { modules, searchQuery, searchResults } = useCourse();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 监听滚动以更新当前激活的章节（可选功能，暂不实现以保持简单）
+
+  const handleShare = (title: string) => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success(`Link to "${title}" copied to clipboard`);
+  };
+
+  // 如果正在搜索且有结果，显示搜索结果概览
+  if (searchQuery && searchResults.length > 0) {
+    // 这里我们仍然显示完整内容，但可以通过高亮或其他方式辅助
+    // 目前的设计是侧边栏显示结果，点击跳转，所以主区域保持显示所有内容
+  }
+
+  return (
+    <div className="flex-1 h-full overflow-y-auto bg-background scroll-smooth" ref={containerRef}>
+      <div className="max-w-4xl mx-auto px-8 py-12 lg:px-12 lg:py-16">
+        
+        {/* Welcome / Intro Section */}
+        <div className="mb-16 pb-8 border-b border-border">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-medium mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+            </span>
+            Course Knowledge Base
+          </div>
+          <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+            Course Summary & <br/>
+            <span className="text-primary">Review Materials</span>
+          </h1>
+          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
+            A comprehensive, searchable collection of course notes covering Proteomics, Mass Spectrometry, Chromatography, and Metabolomics.
+          </p>
+        </div>
+
+        {/* Modules Content */}
+        <div className="space-y-24">
+          {modules.map((module, index) => (
+            <div key={module.id} id={module.id} className="scroll-mt-8">
+              {/* Module Header */}
+              <div className="mb-10">
+                <div className="flex items-center gap-4 text-muted-foreground mb-4 font-mono text-sm">
+                  <span className="text-primary font-bold">MODULE {(index + 1).toString().padStart(2, '0')}</span>
+                  <span className="h-px w-8 bg-border"></span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 15 min read</span>
+                </div>
+                <div className="flex justify-between items-start gap-4 group">
+                  <h2 className="text-3xl font-bold tracking-tight text-foreground mt-0 border-none pb-0">
+                    {module.title}
+                  </h2>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
+                    onClick={() => handleShare(module.title)}
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                </div>
+                {module.content && (
+                  <div className="mt-6 text-lg text-muted-foreground leading-relaxed border-l-2 border-primary/20 pl-6">
+                    <MarkdownRenderer content={module.content} />
+                  </div>
+                )}
+              </div>
+
+              {/* Sections */}
+              <div className="space-y-16 pl-0 lg:pl-4">
+                {module.sections.map((section) => (
+                  <div key={section.id} id={section.id} className="scroll-mt-20 relative group/section">
+                    <div className="absolute -left-6 top-1 opacity-0 group-hover/section:opacity-100 transition-opacity hidden lg:block">
+                      <ChevronRight className="w-4 h-4 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3">
+                      {section.title}
+                    </h3>
+                    <div className="prose-content">
+                      <MarkdownRenderer content={section.content} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Module Divider */}
+              {index < modules.length - 1 && (
+                <div className="h-px w-full bg-border mt-24"></div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-32 pt-10 border-t border-border text-center text-muted-foreground text-sm">
+          <p>© 2025 Course Knowledge Base. Generated by Manus AI.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
